@@ -50,6 +50,20 @@ long eval(mpc_ast_t* t) {
   return x;  
 }
 
+int numOfLeaves(mpc_ast_t* t){
+  if(t->children_num == 0){
+      return 1;
+  }
+
+  int total = 0;
+
+  for(int i = 0; i < t->children_num; i++){
+    total += numOfLeaves(t->children[i]);
+  }
+
+  return total;
+}
+
 int main(int argc, char **argv) {
     /* Create Some Parsers */
     mpc_parser_t* Number   = mpc_new("number");
@@ -85,6 +99,9 @@ int main(int argc, char **argv) {
         if (mpc_parse("<stdin>", input, Rah, &r)) {
             long result = eval(r.output);
             printf("%li\n", result);
+            mpc_ast_print(r.output);
+            int num = numOfLeaves(r.output);
+            printf("Number of leaves: %i\n", num);
             mpc_ast_delete(r.output);
         } else {
           /* Otherwise Print the Error */
